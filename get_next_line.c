@@ -18,6 +18,7 @@ int get_next_line(int fd, char **line)
 		{
 			while (buf[j] != '/n')
 				line[j++] = buf[j++];
+			ostatok = //то, что после /n //
 		}
 		i++;
 	}
