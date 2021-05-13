@@ -1,34 +1,64 @@
 #include "get_next_line.h"
 
-int get_next_line(int fd, char **line)
+char	**what_left(char *ostatok, char **line)
 {
-	int		i = 0; int j = 0;
-	char	*buf;
-	int		n_read;
-	size_t	line_len;
-	static char	*ostatok;
+	int	i = 0;
 
-	if (fd == -1 || !line)
-		return (-1);
-	buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	n_read = read(fd, buf, BUFFER_SIZE);
-	while (buf[i])
+	while(ostatok[i])
 	{
-		if (buf[i] == '/n')
+		line[i] = ostatok[i];
+		i++;
+	}
+	i = 0;
+	while(ostatok[i])
+	{
+		free(ostatok[i]);
+		i++;
+	}
+	return (line);
+}
+
+char	**check_new_line(char *ostatok, char **line)
+{
+	int		i = 0;
+	int		j = 0;
+
+	while (ostatok[i])
+	{
+		if (ostatok[i] == '/n')
 		{
-			while (buf[j] != '/n')
-				line[j++] = buf[j++];
-			ostatok = //то, что после /n //
+			while (ostatok[j++] != '/n')
+				line[j] = ostatok[j];
+			j = 0;
+			while (ostatok[j] != '/n')
+			{
+				free(ostatok[j]);
+				j++;
+			}
 		}
 		i++;
 	}
-	
-	buf[n_read] = '\0';
+	return (line);
+}
 
-	/* if (.. == '/n')
+int get_next_line(int fd, char **line)
+{
+	static	char	*ostatok;
+	int		n_read;
+	size_t	line_len;
+
+	if (fd == -1 || !line)
+		return (-1);
+	ostatok = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	if (!ostatok)
+		return (-1);
+	n_read = read(fd, ostatok, BUFFER_SIZE);
+	if (line == check_new_line(ostatok, line))
 		return (1);
 	else
+	{
+		line = what_left(ostatok, line);
 		return (0);
-
-	free (fd); */
+	}
+	ostatok[n_read] = '\0';
 }
