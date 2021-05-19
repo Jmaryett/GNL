@@ -17,8 +17,8 @@ static int	check_line(char *ostatok, char **line, char *buf)
 	len = ft_strlen(ostatok + i) + 1;
 	ostatok = ft_memmove(ostatok, ostatok + i, len);
 	return (1);
-	
 }
+
 
 /* static int	ft_strchr(const char *str, int ch)
 {
@@ -83,6 +83,21 @@ static char	*join_from_buf(char *ostatok, char *buf)
 	return (res);
 }
 
+/* static int	reading(int fd, char *buf, char *ostatok, char **line)
+{
+	int	n_read;
+	
+	n_read = read(fd, buf, BUFFER_SIZE);
+	if (n_read <= 0)
+		return (0);
+	buf[n_read] = '\0';
+	ostatok = join_from_buf(ostatok, buf);
+	if (ostatok)
+		if (check_line(ostatok, line, buf))
+			return (1);
+	return (2);
+} */
+
 int	get_next_line(int fd, char **line)
 {
 	char		*buf;
@@ -99,13 +114,16 @@ int	get_next_line(int fd, char **line)
 	if (ostatok)
 		if (check_line(ostatok, line, buf))
 			return (1);
-	while ((n_read = read(fd, buf, BUFFER_SIZE)) > 0)
+	while (1)
 	{
+		n_read = read(fd, buf, BUFFER_SIZE);
+		if (n_read <= 0)
+			break ;
 		buf[n_read] = '\0';
 		ostatok = join_from_buf(ostatok, buf);
 		if (ostatok)
 			if (check_line(ostatok, line, buf))
-				return (1);;
+				return (1);
 	}
 	end_case(&buf, &ostatok, line);
 	return (0);
