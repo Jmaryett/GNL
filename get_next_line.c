@@ -1,6 +1,26 @@
 #include "get_next_line.h"
 
-static int	ft_strchr(const char *str, int ch)
+static int	check_line(char *ostatok, char **line, char *buf)
+{
+	int		i;
+	size_t	len;
+
+	i = 0;
+	if (!ostatok)
+		return (0);
+	while (ostatok [i] != '\n')
+		if (!ostatok[i++])
+			return (0);
+	free (buf);
+	*line = ft_substr(ostatok, 0, i);
+	i++;
+	len = ft_strlen(ostatok + i) + 1;
+	ostatok = ft_memmove(ostatok, ostatok + i, len);
+	return (1);
+	
+}
+
+/* static int	ft_strchr(const char *str, int ch)
 {
 	int	i;
 
@@ -14,7 +34,7 @@ static int	ft_strchr(const char *str, int ch)
 		i++;
 	}
 	return (-1);
-}
+} */
 
 static int	error_case(char *buf)
 {
@@ -23,16 +43,17 @@ static int	error_case(char *buf)
 	return (-1);
 }
 
-static int	line_new_line(char *ostatok, int i, char **line)
+/* static int	line_new_line(char *ostatok, int i, char **line, char *buf)
 {
 	size_t	len;
 
+	free(buf);
 	*line = ft_substr(ostatok, 0, i);
 	i++;
 	len = ft_strlen(ostatok + i) + 1;
 	ostatok = ft_memmove(ostatok, ostatok + i, len);
 	return (1);
-}
+} */
 
 static char	*join_from_buf(char *ostatok, char *buf)
 {
@@ -66,8 +87,8 @@ int	get_next_line(int fd, char **line)
 {
 	char		*buf;
 	static char	*ostatok;
-	int		i;
-	size_t n_read;
+	int			i;
+	size_t		n_read;
 
 	i = 0;
 	if (fd < 0 || !line || BUFFER_SIZE < 1)
@@ -75,20 +96,16 @@ int	get_next_line(int fd, char **line)
 	buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buf || read(fd, buf, 0) < 0)
 		return (error_case(buf));
-	if (ostatok && (i = ft_strchr(ostatok, '\n')) != -1)
-	{
-		free(buf);
-		return(line_new_line(ostatok, i, line));
-	}
+	if (ostatok)
+		if (check_line(ostatok, line, buf))
+			return (1);
 	while ((n_read = read(fd, buf, BUFFER_SIZE)) > 0)
 	{
 		buf[n_read] = '\0';
 		ostatok = join_from_buf(ostatok, buf);
-		if (ostatok && (i = ft_strchr(ostatok, '\n')) != -1)
-		{
-			free(buf);
-			return(line_new_line(ostatok, i, line));
-		}
+		if (ostatok)
+			if (check_line(ostatok, line, buf))
+				return (1);;
 	}
 	end_case(&buf, &ostatok, line);
 	return (0);

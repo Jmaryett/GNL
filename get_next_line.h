@@ -14,11 +14,10 @@
 # endif
 
 int	get_next_line(int fd, char **line);
-void	*ft_memmove(void *dst, const void *src, size_t len);
 size_t	ft_strlen(const char *str);
 char	*ft_strdup(const char *str);
-void	end_case(char **buf, char **ostatok, char **line);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
-
+void	end_case(char **buf, char **ostatok, char **line);
+void	*ft_memmove(void *dst, const void *src, size_t len);
 
 # endif
