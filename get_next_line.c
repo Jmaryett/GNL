@@ -83,19 +83,9 @@ static char	*join_from_buf(char *ostatok, char *buf)
 	return (res);
 }
 
-/* static int	reading(int fd, char *buf, char *ostatok, char **line)
-{
-	int	n_read;
-	
-	n_read = read(fd, buf, BUFFER_SIZE);
-	if (n_read <= 0)
-		return (0);
-	buf[n_read] = '\0';
-	ostatok = join_from_buf(ostatok, buf);
-	if (ostatok)
-		if (check_line(ostatok, line, buf))
-			return (1);
-	return (2);
+/* static int	reading(int fd, char *buf, char *ostatok, char **line, int n_read)
+{	
+	return (0);
 } */
 
 int	get_next_line(int fd, char **line)
@@ -121,10 +111,10 @@ int	get_next_line(int fd, char **line)
 			break ;
 		buf[n_read] = '\0';
 		ostatok = join_from_buf(ostatok, buf);
-		if (ostatok)
-			if (check_line(ostatok, line, buf))
-				return (1);
+		if (ostatok && check_line(ostatok, line, buf))
+			return (1);
 	}
 	end_case(&buf, &ostatok, line);
 	return (0);
 }
+	/* if (check_line(ostatok, line, buf)) */

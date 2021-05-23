@@ -4,3 +4,4 @@
 *.json
 Makefile
 *_copy.c
+a.out.dSYM
