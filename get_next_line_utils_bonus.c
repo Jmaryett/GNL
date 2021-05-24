@@ -1,4 +1,4 @@
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 void	*ft_memmove(void *dst, const void *src, size_t len)
 {
@@ -25,7 +25,7 @@ void	*ft_memmove(void *dst, const void *src, size_t len)
 		}
 	}
 	return (d);
-} 
+}
 
 size_t	ft_strlen(const char *str)
 {

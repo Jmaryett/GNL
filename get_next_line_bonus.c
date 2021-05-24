@@ -1,4 +1,4 @@
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 static int	check_line(char *ostatok, char **line, char *buf)
 {
@@ -19,41 +19,12 @@ static int	check_line(char *ostatok, char **line, char *buf)
 	return (1);
 }
 
-
-/* static int	ft_strchr(const char *str, int ch)
-{
-	int	i;
-
-	i = 0;
-	if (!str)
-		return (-1);
-	while (str[i])
-	{
-		if (str[i] == (char)ch)
-			return (i);
-		i++;
-	}
-	return (-1);
-} */
-
 static int	error_case(char *buf)
 {
 	if (buf)
 		free(buf);
 	return (-1);
 }
-
-/* static int	line_new_line(char *ostatok, int i, char **line, char *buf)
-{
-	size_t	len;
-
-	free(buf);
-	*line = ft_substr(ostatok, 0, i);
-	i++;
-	len = ft_strlen(ostatok + i) + 1;
-	ostatok = ft_memmove(ostatok, ostatok + i, len);
-	return (1);
-} */
 
 static char	*join_from_buf(char *ostatok, char *buf)
 {
@@ -83,38 +54,39 @@ static char	*join_from_buf(char *ostatok, char *buf)
 	return (res);
 }
 
-/* static int	reading(int fd, char *buf, char *ostatok, char **line, int n_read)
-{	
+static int	fucking_norms(char **ostatok, char **buf, char **line, int n_read)
+{
+	*(*buf + n_read) = '\0';
+	*ostatok = join_from_buf(*ostatok, *buf);
+	if (*ostatok && check_line(*ostatok, line, *buf))
+		return (1);
 	return (0);
-} */
+}
 
 int	get_next_line(int fd, char **line)
 {
 	char		*buf;
-	static char	*ostatok;
+	static char	*ostatok[MAX_FD];
 	int			i;
 	size_t		n_read;
 
 	i = 0;
-	if (fd < 0 || !line || BUFFER_SIZE < 1)
+	if (fd > MAX_FD || fd < 0 || !line || BUFFER_SIZE < 1)
 		return (-1);
 	buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buf || read(fd, buf, 0) < 0)
 		return (error_case(buf));
-	if (ostatok)
-		if (check_line(ostatok, line, buf))
+	if (ostatok[fd])
+		if (check_line(ostatok[fd], line, buf))
 			return (1);
 	while (1)
 	{
 		n_read = read(fd, buf, BUFFER_SIZE);
 		if (n_read <= 0)
 			break ;
-		buf[n_read] = '\0';
-		ostatok = join_from_buf(ostatok, buf);
-		if (ostatok && check_line(ostatok, line, buf))
+		if (fucking_norms(&ostatok[fd], &buf, line, n_read) > 0)
 			return (1);
 	}
-	end_case(&buf, &ostatok, line);
+	end_case(&buf, &ostatok[fd], line);
 	return (0);
 }
-	/* if (check_line(ostatok, line, buf)) */
